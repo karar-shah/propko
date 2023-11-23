@@ -2,7 +2,7 @@ import { randomBytes, randomUUID } from "crypto";
 import { AuthOptions, Session, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { SessionUser } from "@/typing/next-auth";
+import { SessionUser } from "@/typing/auth";
 import db from "./db";
 
 export const authOptions: AuthOptions = {
@@ -44,9 +44,9 @@ export const authOptions: AuthOptions = {
     },
   },
   pages: {
-    signIn: "/login",
-    signOut: "/login",
-    error: "/login",
+    signIn: "/signin",
+    signOut: "/signout",
+    error: "/signin",
   },
   secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
