@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "npm run migrate",
+    "migrate": "prisma db push --force-reset"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
