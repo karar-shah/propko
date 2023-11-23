@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { SessionUser } from "@/typing/auth";
 import db from "./db";
+import { excludeField } from "@/lib/utils";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -30,15 +31,16 @@ export const authOptions: AuthOptions = {
           },
         });
         if (!user) throw new Error("NOT_FOUND");
-        if (!(await comparePassword(password, user.password)))
+        if (!(await comparePassword(password, user.password))) {
           throw new Error("WRONG_PASSWORD");
-        return { ...user, id: user.id.toString(), password: "" };
+        }
+        return excludeField(user, ["password"]);
       },
     }),
   ],
   session: {
     strategy: "jwt",
-    maxAge: 4 * 60 * 60,
+    maxAge: 24 * 60 * 60,
     generateSessionToken: () => {
       return randomUUID?.() ?? randomBytes(32).toString("hex");
     },
@@ -47,8 +49,9 @@ export const authOptions: AuthOptions = {
     signIn: "/signin",
     signOut: "/signout",
     error: "/signin",
+    newUser: "/signup",
   },
-  secret: process.env.NEXTAUTH_SECRET as string,
+  // secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -66,20 +69,7 @@ export const authOptions: AuthOptions = {
 };
 
 export async function getServerAuth() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return null;
-  const user = await db.user.findFirst({
-    where: { id: session.user.id },
-  });
-  if (!user) return false;
-  return {
-    ...session,
-    user: {
-      id: String(user.id),
-      name: user.name,
-      email: user.email,
-    },
-  };
+  return await getServerSession(authOptions);
 }
 
 export async function hashPassword(password: string) {

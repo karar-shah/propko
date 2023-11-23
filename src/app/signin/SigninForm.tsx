@@ -9,23 +9,64 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { SigninSchema, signinSchema } from "@/validation/auth";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Spinner } from "@/components/ui/spinner";
+import serverActions from "@/server/actions";
+import { excludeField } from "@/lib/utils";
+import { getSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { ApiResCode } from "@/typing/api";
 
 export default function SigninForm() {
-  const form = useForm({});
+  const router = useRouter();
+  const form = useForm<SigninSchema>({
+    resolver: zodResolver(signinSchema),
+    mode: "all",
+  });
+  const handleSubmit = async (values: SigninSchema) => {
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    });
+    console.log(res?.ok);
+    if (res?.error || !res?.ok) {
+      const error = res?.error as ApiResCode;
+      if (error === "NOT_FOUND") {
+        form.setError("email", {
+          message: "Email not registered.",
+          type: "validate",
+        });
+      }
+      if (error === "WRONG_PASSWORD") {
+        form.setError("password", {
+          message: "Wrong password.",
+          type: "validate",
+        });
+      }
+      return;
+    }
+    window.location.reload();
+  };
   return (
     <Form {...form}>
-      <form>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="grid gap-y-4">
           <FormField
             control={form.control}
             name="email"
-            render={({}) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="abc@example.xyz" />
+                  <Input
+                    type="email"
+                    placeholder="abc@example.xyz"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -34,7 +75,7 @@ export default function SigninForm() {
           <FormField
             control={form.control}
             name="password"
-            render={({}) => (
+            render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
                   <FormLabel>Password</FormLabel>
@@ -43,15 +84,18 @@ export default function SigninForm() {
                   </Link>
                 </div>
                 <FormControl>
-                  <Input type="password" placeholder="" />
+                  <Input type="password" placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
-        <div className="mt-10">
-          <Button>Sign in</Button>
+          <Button
+            type="submit"
+            disabled={!form.formState.isDirty || form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? <Spinner /> : "Sign in"}
+          </Button>
         </div>
       </form>
     </Form>

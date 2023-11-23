@@ -1,8 +1,4 @@
-import {
-  NextMiddlewareWithAuth,
-  NextRequestWithAuth,
-  withAuth,
-} from "next-auth/middleware";
+import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 import { ApiResponse } from "./typing/api";
 import { SessionUser } from "./typing/auth";
@@ -12,10 +8,12 @@ const unauthorizedRes: ApiResponse<null> = {
   code: "UNAUTHORIZED",
 };
 
+
 export default withAuth(
   function middleware(req: NextRequestWithAuth) {
+    const { pathname } = req.nextUrl;
     const user = (req.nextauth.token as { user: SessionUser | null }).user;
-    if (!user) return NextResponse.redirect(new URL("/login", req.url));
+    if (!user) return NextResponse.redirect(new URL("/signin", req.url));
   },
   {
     callbacks: {
@@ -30,5 +28,7 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/((?!images|icons|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!signup|forgot-password|images|icons|_next/static|_next/image|favicon.ico).*)",
+  ],
 };

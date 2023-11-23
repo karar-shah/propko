@@ -2,8 +2,12 @@ import { cn } from "@/lib/utils";
 import SigninForm from "./SigninForm";
 import Link from "next/link";
 import { GoogleSigninButton } from "@/components/ui/button";
+import { getServerAuth } from "@/server/lib/auth";
+import { RedirectType, redirect } from "next/navigation";
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerAuth();
+  if (session?.user) return redirect("/", RedirectType.replace);
   return (
     <main className="w-full min-h-screen flex items-center justify-center">
       <div
@@ -19,10 +23,7 @@ export default function Page() {
             </h1>
             <p className="mt-2 text-sm text-secondary-600 dark:text-secondary-400">
               Don&apos;t have an account yet?{" "}
-              <Link
-                className="link"
-                href="/signup"
-              >
+              <Link className="link" href="/signup">
                 Sign up here
               </Link>
             </p>
