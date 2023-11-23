@@ -1,0 +1,11 @@
+@tailwind base;
+
+
+@layer base {
+    .link {
+        @apply text-sm text-primary decoration-2 hover:underline font-medium;
+    }
+}
+
+@tailwind components;
+@tailwind utilities;
