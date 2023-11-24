@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SignupSchema, signupSchema } from "@/validation/auth";
+import { AuthSchema, authSchema } from "@/validation/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Spinner } from "@/components/ui/spinner";
@@ -20,15 +20,12 @@ import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
   const router = useRouter();
-  const form = useForm<SignupSchema>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<AuthSchema>({
+    resolver: zodResolver(authSchema),
     mode: "all",
   });
-  const handleSubmit = async (values: SignupSchema) => {
-    console.log(values);
-    const res = await serverActions.auth.signup(
-      excludeField(values, ["confPassword"])
-    );
+  const handleSubmit = async (values: AuthSchema) => {
+    const res = await serverActions.auth.signup(values);
     if (res.succeed && res.data) {
       const res = await signIn("credentials", {
         redirect: false,
@@ -38,7 +35,7 @@ export default function SignupForm() {
       if (!res?.ok || res.error) {
         return router.replace("/signin");
       }
-      return router.replace("/");
+      return window.location.reload();
     }
     if (res.code === "EMAIL_ALREADY_EXISTS") {
       form.setError("email", {
@@ -51,19 +48,6 @@ export default function SignupForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="grid gap-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Your Name</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="i.e John Doe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="email"
@@ -87,19 +71,6 @@ export default function SignupForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="confPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="" {...field} />
                 </FormControl>

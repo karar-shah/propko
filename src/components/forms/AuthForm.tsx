@@ -9,16 +9,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AuthSchema, authSchema } from "@/validation/auth";
+import {
+  AuthSchema,
+  SigninSchema,
+  authSchema,
+} from "@/validation/auth";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Spinner } from "@/components/ui/spinner";
+import serverActions from "@/server/actions";
+import { excludeField } from "@/lib/utils";
 import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ApiResCode } from "@/typing/api";
 
-export default function SigninForm() {
+type AuthFormProps = {
+  handleSubmit: (data: AuthSchema) => void;
+};
+
+export default function AuthForm() {
   const form = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
     mode: "all",

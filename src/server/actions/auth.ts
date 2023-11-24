@@ -1,13 +1,12 @@
 "use server";
-import { SignupSchema } from "@/validation/auth";
+import { AuthSchema } from "@/validation/auth";
 import db from "../lib/db";
 import { ApiResponse } from "@/typing/api";
 import { User } from "@prisma/client";
 import { hashPassword } from "../lib/auth";
+import mailer from "../lib/mailer";
 
-export async function signup(
-  data: Omit<SignupSchema, "confPassword">
-): Promise<ApiResponse<User>> {
+export async function signup(data: AuthSchema): Promise<ApiResponse<User>> {
   try {
     const userExist = await db.user.findFirst({
       where: {
@@ -25,11 +24,12 @@ export async function signup(
     const user = await db.user.create({
       data: {
         email: data.email,
-        name: data.name,
         password: hashedPassword,
       },
     });
     if (!user) throw new Error("User not created.");
+    // Send verification email to user
+    await mailer.sendeVerificationEmail(user);
     return {
       succeed: true,
       code: "SUCCESS",

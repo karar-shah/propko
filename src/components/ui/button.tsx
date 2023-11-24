@@ -1,6 +1,8 @@
+"use client";
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { signOut } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
 
@@ -95,4 +97,12 @@ const GoogleSigninButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 GoogleSigninButton.displayName = "GoogleSigninButton";
 
-export { Button, buttonVariants, GoogleSigninButton };
+function LogoutButton() {
+  return (
+    <Button type="button" onClick={() => signOut({ redirect: true })}>
+      Logout
+    </Button>
+  );
+}
+
+export { Button, buttonVariants, GoogleSigninButton, LogoutButton };

@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
@@ -160,7 +161,7 @@ const FormMessage = React.forwardRef<
       ref={ref}
       id={formMessageId}
       className={cn(
-        "text-[0.8rem] font-medium text-red-500 dark:text-red-900",
+        "text-[0.8rem] font-medium text-red-500 dark:text-red-500",
         className
       )}
       {...props}
