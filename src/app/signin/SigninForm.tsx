@@ -87,10 +87,7 @@ export default function SigninForm() {
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            disabled={!form.formState.isDirty || form.formState.isSubmitting}
-          >
+          <Button type="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? <Spinner /> : "Sign in"}
           </Button>
         </div>
