@@ -12,8 +12,8 @@ const mailjet = MailJet.apiConnect(
   process.env.MAILJET_API_SECRET as string
 );
 
-const verificationHtml = (name: string, url: string) => `
-    <h3>Dear ${name},</h3>
+const verificationHtml = (url: string) => `
+    <h3>Dear User,</h3>
     <p>Thank you for signing up with Mirroor AI.</p>
     <p>We're excited to have you as a part of our community.</p>
     <p>Before you can start using our services, we need to confirm your email address. To do this, simply click the link below:</p>
@@ -21,8 +21,8 @@ const verificationHtml = (name: string, url: string) => `
     <p>If you did not sign up for an account with us, please ignore this email. Rest assured, your information remains secure.</p>
 `;
 
-const resetPasswordHtml = (name: string, url: string) => `
-    <h3>Dear ${name},</h3>
+const resetPasswordHtml = (url: string) => `
+    <h3>Dear User,</h3>
     <p>We recently received a request to reset your password for your Mirroor AI account.</p>
     <p>Don't worry; we're here to help!</p>
     <p>To reset your password, click on the link below:</p>
@@ -69,7 +69,6 @@ const sendeResetPasswordEmail = async (user: User) => {
     user.email,
     "Reset Password",
     resetPasswordHtml(
-      user.name,
       `${BASE_URL}/api/auth/reset-password/?token=${token}`
     )
   );
@@ -82,7 +81,6 @@ const sendeVerificationEmail = async (user: User) => {
     user.email,
     "Email Verification",
     verificationHtml(
-      user.name,
       `${BASE_URL}/verify-email/?token=${token}`
     )
   );
