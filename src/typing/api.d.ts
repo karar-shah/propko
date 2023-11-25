@@ -4,6 +4,8 @@ export type ApiResCode =
   | "UNKOWN_ERROR"
   | "NOT_FOUND"
   | "EMAIL_ALREADY_EXISTS"
+  | "EMAIL_NOT_VERIFIED"
+  | "EXPIRED"
   | "WRONG_PASSWORD";
 
 export type ApiResponse<TData = any> = {} & (

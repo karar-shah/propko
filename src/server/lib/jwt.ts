@@ -1,6 +1,6 @@
 import { verify as jwtVerify, sign as jwtSign } from "jsonwebtoken";
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY ?? "kajskajskajskajsk";
+const JWT_SECRET_KEY = process.env.NEXTAUTH_SECRET as string;
 
 export type JwtSessionPayload = {
   userId: string;
@@ -22,7 +22,7 @@ async function generateToken(
   payload: JwtSessionPayload
 ): Promise<string | null | undefined> {
   return await new Promise<any>((resolve) => {
-    jwtSign(payload, JWT_SECRET_KEY, { expiresIn: "1h" }, (err, token) => {
+    jwtSign(payload, JWT_SECRET_KEY, { expiresIn: "24h" }, (err, token) => {
       if (err || !token) {
         resolve(null);
       }

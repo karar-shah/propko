@@ -9,6 +9,11 @@ const unauthorizedRes: ApiResponse<null> = {
 };
 
 
+// export default function middleware() {
+
+// }
+
+
 export default withAuth(
   function middleware(req: NextRequestWithAuth) {
     const { pathname } = req.nextUrl;
@@ -29,6 +34,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    "/((?!signup|forgot-password|images|icons|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|verify-email|signup|reset-password|images|icons|_next/static|_next/image|favicon.ico).*)",
   ],
 };

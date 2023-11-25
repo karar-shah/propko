@@ -7,7 +7,9 @@ import { RedirectType, redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await getServerAuth();
-  if (session?.user) return redirect("/", RedirectType.replace);
+  if (session?.user && session.user.emailVerified) {
+    return redirect("/", RedirectType.replace);
+  }
   return (
     <main className="w-full min-h-screen flex items-center justify-center px-5">
       <div
@@ -31,7 +33,6 @@ export default async function Page() {
 
           <div className="mt-5">
             <GoogleSigninButton />
-
             <div className="py-3 flex items-center text-xs text-secondary-400 uppercase before:flex-[1_1_0%] before:border-t before:border-secondary-200 before:me-6 after:flex-[1_1_0%] after:border-t after:border-secondary-200 after:ms-6 dark:text-secondary-500 dark:before:border-secondary-600 dark:after:border-secondary-600">
               Or
             </div>

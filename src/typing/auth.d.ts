@@ -1,9 +1,12 @@
-import type { User } from "@prisma/client";
+import { IUser } from "@/server/lib/db/schemas/users";
 
-type SessionUser = Omit<User, "password">;
+type SessionUser = Omit<IUser, "password">;
 
 declare module "next-auth" {
   interface Session {
     user: SessionUser;
   }
 }
+
+
+

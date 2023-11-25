@@ -7,7 +7,9 @@ import { RedirectType, redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await getServerAuth();
-  if (session?.user) return redirect("/", RedirectType.replace);
+  if (session?.user && session.user.emailVerified) {
+    return redirect("/", RedirectType.replace);
+  }
   return (
     <main className="w-full min-h-screen flex items-center justify-center px-5">
       <div

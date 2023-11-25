@@ -10,39 +10,53 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { AuthSchema, authSchema } from "@/validation/auth";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Spinner } from "@/components/ui/spinner";
-import serverActions from "@/server/actions";
-import { excludeField } from "@/lib/utils";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { ApiResCode } from "@/typing/api";
 
-export default function SignupForm() {
+export default function SigninForm() {
   const router = useRouter();
   const form = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
     mode: "all",
   });
   const handleSubmit = async (values: AuthSchema) => {
-    const res = await serverActions.auth.signup(values);
-    if (res.succeed && res.data) {
-      const res = await signIn("credentials", {
-        redirect: false,
-        email: values.email,
-        password: values.password,
-      });
-      if (!res?.ok || res.error) {
-        return router.replace("/signin");
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    });
+    if (res?.error || !res?.ok) {
+      let error: { code: ApiResCode; data?: any } | undefined;
+      if (res?.error) {
+        try {
+          error = JSON.parse(res?.error);
+        } catch (err) {
+          console.log(err);
+        }
       }
-      return window.location.reload();
+      if (error?.code === "EMAIL_NOT_VERIFIED") {
+        return router.push(`/signup/verification?token=${error.data}`);
+      }
+      if (error?.code === "NOT_FOUND") {
+        form.setError("email", {
+          message: "Email not registered.",
+          type: "validate",
+        });
+      }
+      if (error?.code === "WRONG_PASSWORD") {
+        form.setError("password", {
+          message: "Wrong password.",
+          type: "validate",
+        });
+      }
+      return;
     }
-    if (res.code === "EMAIL_ALREADY_EXISTS") {
-      form.setError("email", {
-        message: "Email already registered.",
-        type: "validate",
-      });
-    }
+    window.location.reload();
   };
   return (
     <Form {...form}>
@@ -70,7 +84,12 @@ export default function SignupForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Password</FormLabel>
+                  <Link href={"/reset-password"} className="link">
+                    Forgot Password?
+                  </Link>
+                </div>
                 <FormControl>
                   <Input type="password" placeholder="" {...field} />
                 </FormControl>
@@ -79,7 +98,7 @@ export default function SignupForm() {
             )}
           />
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? <Spinner /> : "Sign up"}
+            {form.formState.isSubmitting ? <Spinner /> : "Sign in"}
           </Button>
         </div>
       </form>

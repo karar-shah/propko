@@ -1,6 +1,6 @@
-import { User } from "@prisma/client";
 import MailJet from "node-mailjet";
 import jwt from "./jwt";
+import { SessionUser } from "@/typing/auth";
 
 const SENDER_EMAIL = process.env.SENDER_EMAIL as string;
 const SENDER_NAME = process.env.SENDER_NAME as string;
@@ -14,8 +14,7 @@ const mailjet = MailJet.apiConnect(
 
 const verificationHtml = (url: string) => `
     <h3>Dear User,</h3>
-    <p>Thank you for signing up with Mirroor AI.</p>
-    <p>We're excited to have you as a part of our community.</p>
+    <p>Thank you for signing up with PropKo.</p>
     <p>Before you can start using our services, we need to confirm your email address. To do this, simply click the link below:</p>
     <a href="${url}">Verify Email</a>
     <p>If you did not sign up for an account with us, please ignore this email. Rest assured, your information remains secure.</p>
@@ -23,7 +22,7 @@ const verificationHtml = (url: string) => `
 
 const resetPasswordHtml = (url: string) => `
     <h3>Dear User,</h3>
-    <p>We recently received a request to reset your password for your Mirroor AI account.</p>
+    <p>We recently received a request to reset your password for your PropKo account.</p>
     <p>Don't worry; we're here to help!</p>
     <p>To reset your password, click on the link below:</p>
     <a href="${url}">Reset Password</a>
@@ -62,27 +61,23 @@ const sendEmail = async (
   }
 };
 
-const sendeResetPasswordEmail = async (user: User) => {
+const sendeResetPasswordEmail = async (user: SessionUser) => {
   const token = await jwt.generateToken({ userId: user.id });
   if (!token) return false;
   return await sendEmail(
     user.email,
     "Reset Password",
-    resetPasswordHtml(
-      `${BASE_URL}/api/auth/reset-password/?token=${token}`
-    )
+    resetPasswordHtml(`${BASE_URL}/reset-password/?token=${token}`)
   );
 };
 
-const sendeVerificationEmail = async (user: User) => {
+const sendeVerificationEmail = async (user: SessionUser) => {
   const token = await jwt.generateToken({ userId: user.id });
   if (!token) return false;
   return await sendEmail(
     user.email,
     "Email Verification",
-    verificationHtml(
-      `${BASE_URL}/verify-email/?token=${token}`
-    )
+    verificationHtml(`${BASE_URL}/api/auth/verify-email/?token=${token}`)
   );
 };
 

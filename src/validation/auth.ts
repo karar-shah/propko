@@ -9,6 +9,22 @@ export const authSchema = z.object({
 
 export type AuthSchema = z.infer<typeof authSchema>;
 
+export const resetPasswordSchema = z.object({
+  email: z
+    .string({ required_error: "Field Required." })
+    .email({ message: "Please enter a valid email address." }),
+});
+
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+
+
+
+export const createPasswordSchema = z.object({
+  password: z.string({ required_error: "Field Required." }),
+});
+
+export type CreatePasswordSchema = z.infer<typeof createPasswordSchema>;
+
 // export const signupSchema = z
 //   .object({
 //     email: z

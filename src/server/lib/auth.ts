@@ -1,10 +1,10 @@
 import { randomBytes, randomUUID } from "crypto";
-import { AuthOptions, Session, getServerSession } from "next-auth";
+import { AuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { SessionUser } from "@/typing/auth";
-import db from "./db";
-import { excludeField } from "@/lib/utils";
+import withMongoose, { db } from "./db";
+import { ApiResCode } from "@/typing/api";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -20,22 +20,29 @@ export const authOptions: AuthOptions = {
           label: "Password",
         },
       },
-      async authorize(credentials) {
+      authorize: withMongoose(async (credentials) => {
         const { email, password } = credentials as {
           email: string;
           password: string;
         };
-        const user = await db.user.findFirst({
-          where: {
-            email: email,
-          },
-        });
-        if (!user) throw new Error("NOT_FOUND");
+        const user = await db.User.findOne({
+          email: email,
+        }).then((_user) => _user?.toObject());
+        if (!user) throw new Error(JSON.stringify({ code: "NOT_FOUND" }));
         if (!(await comparePassword(password, user.password))) {
-          throw new Error("WRONG_PASSWORD");
+          throw new Error(JSON.stringify({ code: "WRONG_PASSWORD" }));
         }
-        return excludeField(user, ["password"]);
-      },
+        if (!user.emailVerified) {
+          throw new Error(
+            JSON.stringify({ code: "EMAIL_NOT_VERIFIED", data: user.id })
+          );
+        }
+        return {
+          id: user.id,
+          email: user.email,
+          emailVerified: user.emailVerified,
+        } as any;
+      }),
     }),
   ],
   session: {
@@ -76,6 +83,7 @@ export async function hashPassword(password: string) {
   try {
     return bcrypt.hash(password, 10);
   } catch (error) {
+    console.log(error);
     return null;
   }
 }
