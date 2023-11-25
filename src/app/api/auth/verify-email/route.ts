@@ -17,6 +17,7 @@ export const GET = withMongoose(async (req: NextRequest) => {
       id: payload.userId,
     })
   )?.toObject();
+  console.log("User", user);
   if (!user) {
     return NextResponse.redirect(new URL("/signup", req.url));
   }
