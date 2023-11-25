@@ -34,7 +34,7 @@ const UsersSchema = new mongoose.Schema<IUser>(
     },
   },
   { timestamps: true }
-)
+);
 
 let User: mongoose.Model<IUser> =
   mongoose.models.Users || mongoose.model<IUser>("Users", UsersSchema);
