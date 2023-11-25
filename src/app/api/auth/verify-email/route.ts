@@ -1,8 +1,8 @@
-import { db } from "@/server/lib/db";
+import withMongoose, { db } from "@/server/lib/db";
 import jwt from "@/server/lib/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest) => {
+export const GET = withMongoose(async (req: NextRequest) => {
   const { searchParams } = req.nextUrl;
   const token = searchParams.get("token");
   if (!token) {
@@ -21,5 +21,7 @@ export const GET = async (req: NextRequest) => {
     return NextResponse.redirect(new URL("/signup", req.url));
   }
   await db.User.updateOne({ id: payload.userId }, { emailVerified: true });
-  return NextResponse.redirect(new URL(`/signup/verification?token=${token}`, req.url));
-};
+  return NextResponse.redirect(
+    new URL(`/signup/verification?token=${token}`, req.url)
+  );
+});
