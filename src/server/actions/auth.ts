@@ -1,9 +1,5 @@
 "use server";
-import {
-  AuthSchema,
-  CreatePasswordSchema,
-  ResetPasswordSchema,
-} from "@/validation/auth";
+import { AuthSchema, ResetPasswordSchema } from "@/validation/auth";
 import { hashPassword } from "../lib/auth";
 import withMongoose, { db } from "../lib/db";
 import mailer from "../lib/mailer";
