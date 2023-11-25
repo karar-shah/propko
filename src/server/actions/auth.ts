@@ -31,7 +31,6 @@ export const signup = withMongoose(async (data: AuthSchema) => {
       emailVerified: false,
     }).then((_user) => _user.toObject());
     if (!user) throw new Error("User not created.");
-    // Send verification email to user
     await sendeVerificationEmail(user);
     return {
       succeed: true,
@@ -110,7 +109,6 @@ export const resetPassword = withMongoose(async (data: ResetPasswordSchema) => {
         code: "NOT_FOUND",
       };
     }
-    // Send verification email to user
     await sendeResetPasswordEmail(user);
     return {
       succeed: true,
