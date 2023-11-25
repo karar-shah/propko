@@ -23,6 +23,6 @@ export const GET = withMongoose(async (req: NextRequest) => {
   }
   await db.User.updateOne({ id: payload.userId }, { emailVerified: true });
   return NextResponse.redirect(
-    new URL(`/signup/verification?token=${token}`, req.url)
+    new URL(`/signup/verification?token=${user.id}`, req.url)
   );
 });
