@@ -1,13 +1,18 @@
 import { randomBytes, randomUUID } from "crypto";
 import { AuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { SessionUser } from "@/typing/auth";
-import withMongoose, { db } from "./db";
+import withMongoose, { connectMongoose, db } from "./db";
 import { ApiResCode } from "@/typing/api";
 
 export const authOptions: AuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: "",
+      clientSecret: "",
+    }),
     CredentialsProvider({
       credentials: {
         email: {
@@ -60,6 +65,17 @@ export const authOptions: AuthOptions = {
   },
   // secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
+    async signIn({ user, account }) {
+      await connectMongoose();
+      console.log("User", user);
+      console.log("Account", account);
+      const { id, email } = user;
+      const existingUser = await db.User.findOne({ email });
+      if (!existingUser) {
+        await db.User.create({ id, email });
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.user = user;
