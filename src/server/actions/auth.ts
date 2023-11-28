@@ -22,7 +22,7 @@ export const signup = withMongoose(async (data: AuthSchema) => {
     const user = await db.User.createUser({
       authType: "credentials",
       email: data.email,
-      password: data.password,
+      password: hashedPassword,
     });
     if (!user) throw new Error("User not created.");
     await sendeVerificationEmail(user);
