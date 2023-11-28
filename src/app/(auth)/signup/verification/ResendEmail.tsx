@@ -9,11 +9,7 @@ export default function ResendEmailButton({ user }: { user: PublicUser }) {
   const [sending, setSending] = useState(false);
   const handleResendEmail = async () => {
     setSending(true);
-    await serverActions.auth.sendeVerificationEmail({
-      email: user.email,
-      emailVerified: user.emailVerified,
-      id: user.id,
-    });
+    await serverActions.auth.sendeVerificationEmail(user);
     setSending(false);
   };
   return (
