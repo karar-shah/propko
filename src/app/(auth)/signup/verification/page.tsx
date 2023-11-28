@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { getServerAuth } from "@/server/lib/auth";
 import { RedirectType, redirect } from "next/navigation";
-import { db, validateMongooseObject } from "@/server/lib/db";
+import { db } from "@/server/lib/db";
 import ResendEmailButton from "./ResendEmail";
 import { CheckCircledIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 
