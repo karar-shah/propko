@@ -2,18 +2,14 @@
 
 import { Spinner } from "@/components/ui/spinner";
 import serverActions from "@/server/actions";
-import { IUser } from "@/server/lib/db/schemas/users";
+import { PublicUser } from "@/typing/auth";
 import { useState } from "react";
 
-export default function ResendEmailButton({ user }: { user: IUser }) {
+export default function ResendEmailButton({ user }: { user: PublicUser }) {
   const [sending, setSending] = useState(false);
   const handleResendEmail = async () => {
     setSending(true);
-    await serverActions.auth.sendeResetPasswordEmail({
-      email: user.email,
-      emailVerified: user.emailVerified,
-      id: user.id,
-    });
+    await serverActions.auth.sendeResetPasswordEmail(user);
     setSending(false);
   };
   return (
