@@ -3,15 +3,19 @@ import { AuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
-import { SessionUser } from "@/typing/auth";
+import { PublicUser } from "@/typing/auth";
 import withMongoose, { connectMongoose, db } from "./db";
-import { ApiResCode } from "@/typing/api";
 
 export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: "",
-      clientSecret: "",
+      clientId: process.env.GOOGLE_AUTH_ID as string,
+      clientSecret: process.env.GOOGLE_AUTH_SECRET as string,
+      // authorization: {
+      //   params: {
+      //     scope: ""
+      //   }
+      // }
     }),
     CredentialsProvider({
       credentials: {
@@ -33,20 +37,24 @@ export const authOptions: AuthOptions = {
         const user = await db.User.findOne({
           email: email,
         }).then((_user) => _user?.toObject());
+        console.log("Auth User ", user);
         if (!user) throw new Error(JSON.stringify({ code: "NOT_FOUND" }));
-        if (!(await comparePassword(password, user.password))) {
-          throw new Error(JSON.stringify({ code: "WRONG_PASSWORD" }));
-        }
-        if (!user.emailVerified) {
-          throw new Error(
-            JSON.stringify({ code: "EMAIL_NOT_VERIFIED", data: user.id })
-          );
+        if (user?.authType === "credentials") {
+          if (!(await comparePassword(password, user.password))) {
+            throw new Error(JSON.stringify({ code: "WRONG_PASSWORD" }));
+          }
+          if (!user.emailVerified) {
+            throw new Error(
+              JSON.stringify({ code: "EMAIL_NOT_VERIFIED", data: user.id })
+            );
+          }
         }
         return {
           id: user.id,
           email: user.email,
           emailVerified: user.emailVerified,
-        } as any;
+          authType: user.authType,
+        } as PublicUser;
       }),
     }),
   ],
@@ -66,13 +74,17 @@ export const authOptions: AuthOptions = {
   // secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
     async signIn({ user, account }) {
-      await connectMongoose();
-      console.log("User", user);
-      console.log("Account", account);
-      const { id, email } = user;
-      const existingUser = await db.User.findOne({ email });
+      // console.log("User", user);
+      // console.log("Account", account);
+      if (!user.email) return false;
+
+      const existingUser = await db.User.getUserByEmail(user.email);
       if (!existingUser) {
-        await db.User.create({ id, email });
+        const createdUser = await db.User.createUser({
+          authType: "google",
+          email: user.email,
+        });
+        if (!createdUser) throw new Error("Internal Server Error");
       }
       return true;
     },
@@ -84,7 +96,7 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (token.user) {
-        session.user = token.user as SessionUser;
+        session.user = token.user as PublicUser;
       }
       return session;
     },

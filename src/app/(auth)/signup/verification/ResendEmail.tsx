@@ -2,10 +2,10 @@
 
 import { Spinner } from "@/components/ui/spinner";
 import serverActions from "@/server/actions";
-import { IUser } from "@/server/lib/db/schemas/users";
+import { PublicUser } from "@/typing/auth";
 import { useState } from "react";
 
-export default function ResendEmailButton({ user }: { user: IUser }) {
+export default function ResendEmailButton({ user }: { user: PublicUser }) {
   const [sending, setSending] = useState(false);
   const handleResendEmail = async () => {
     setSending(true);
@@ -14,7 +14,7 @@ export default function ResendEmailButton({ user }: { user: IUser }) {
       emailVerified: user.emailVerified,
       id: user.id,
     });
-    setSending(false)
+    setSending(false);
   };
   return (
     <button className="link" onClick={handleResendEmail} disabled={sending}>

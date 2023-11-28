@@ -12,12 +12,7 @@ export const GET = withMongoose(async (req: NextRequest) => {
   if (!payload) {
     return new NextResponse("Token Null or Expired.");
   }
-  const user = (
-    await db.User.findOne({
-      id: payload.userId,
-    })
-  )?.toObject();
-  console.log("User", user);
+  const user = await db.User.findById(payload.userId);
   if (!user) {
     return NextResponse.redirect(new URL("/signup", req.url));
   }

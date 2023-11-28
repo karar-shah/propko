@@ -15,13 +15,10 @@ export default async function Page({
   if (session?.user && session.user.emailVerified) {
     return redirect("/", RedirectType.replace);
   }
-  let user = (
-    await db.User.findOne({ id: searchParams.token })
-      .select(["email", "id", "emailVerified"])
-      .exec()
-  )?.toObject();
+  if (!searchParams.token) return redirect("/signup", RedirectType.replace);
+  const user = await db.User.getUserById(searchParams.token);
   if (!user) return redirect("/signup", RedirectType.replace);
-  user = validateMongooseObject(user);
+
   return (
     <main className="w-full min-h-screen flex items-center justify-center px-5">
       <div

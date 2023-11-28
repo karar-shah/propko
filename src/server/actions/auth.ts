@@ -10,9 +10,7 @@ export const sendeResetPasswordEmail = mailer.sendeResetPasswordEmail;
 
 export const signup = withMongoose(async (data: AuthSchema) => {
   try {
-    const userExist = await db.User.findOne({
-      email: data.email,
-    }).exec();
+    const userExist = await db.User.getUserByEmail(data.email);
     if (userExist) {
       return {
         succeed: false,
@@ -21,21 +19,17 @@ export const signup = withMongoose(async (data: AuthSchema) => {
     }
     const hashedPassword = await hashPassword(data.password);
     if (!hashedPassword) throw new Error("Password hashing failed");
-    const user = await db.User.create({
+    const user = await db.User.createUser({
+      authType: "credentials",
       email: data.email,
-      password: hashedPassword,
-      emailVerified: false,
-    }).then((_user) => _user.toObject());
+      password: data.password,
+    });
     if (!user) throw new Error("User not created.");
     await sendeVerificationEmail(user);
     return {
       succeed: true,
       code: "SUCCESS",
-      data: {
-        email: user.email,
-        emailVerified: user.emailVerified,
-        id: user.id,
-      },
+      data: user,
     };
   } catch (error) {
     console.log(error);
@@ -56,11 +50,7 @@ export const updatePassword = withMongoose(
           code: "EXPIRED",
         };
       }
-      const user = (
-        await db.User.findOne({
-          id: payload.userId,
-        })
-      )?.toObject();
+      const user = await db.User.getUserById(payload.userId);
       if (!user) {
         return {
           succeed: false,
@@ -76,11 +66,7 @@ export const updatePassword = withMongoose(
       return {
         succeed: true,
         code: "SUCCESS",
-        data: {
-          email: user.email,
-          emailVerified: user.emailVerified,
-          id: user.id,
-        },
+        data: user,
       };
     } catch (error) {
       console.log(error);
@@ -92,13 +78,9 @@ export const updatePassword = withMongoose(
   }
 );
 
-export const resetPassword = withMongoose(async (data: ResetPasswordSchema) => {
+export const resetPassword = async (data: ResetPasswordSchema) => {
   try {
-    const user = await db.User.findOne({
-      email: data.email,
-    })
-      .select(["email", "emailVerified", "id"])
-      .exec();
+    const user = await db.User.getUserByEmail(data.email);
     if (!user) {
       return {
         succeed: false,
@@ -109,11 +91,7 @@ export const resetPassword = withMongoose(async (data: ResetPasswordSchema) => {
     return {
       succeed: true,
       code: "SUCCESS",
-      data: {
-        email: user.email,
-        emailVerified: user.emailVerified,
-        id: user.id,
-      },
+      data: user,
     };
   } catch (error) {
     console.log(error);
@@ -122,4 +100,4 @@ export const resetPassword = withMongoose(async (data: ResetPasswordSchema) => {
       code: "UNKOWN_ERROR",
     };
   }
-});
+};

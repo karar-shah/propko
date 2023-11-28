@@ -1,12 +1,18 @@
 import mongoose from "mongoose";
 import { createId } from "@paralleldrive/cuid2";
+import { connectMongoose } from "..";
+import { CreateUserParams, PublicUser } from "@/typing/auth";
 
-export interface IUser {
+export type AuthType = "google" | "credentials";
+
+export type IUser = {
   id: string;
   email: string;
-  password: string;
   emailVerified: Boolean;
-}
+} & (
+  | { authType: "google"; password?: string }
+  | { authType: "credentials"; password: string }
+);
 
 const UsersSchema = new mongoose.Schema<IUser>(
   {
@@ -17,6 +23,11 @@ const UsersSchema = new mongoose.Schema<IUser>(
       },
       default: () => createId(),
     },
+    authType: {
+      type: String,
+      enum: ["google", "credentials"],
+      default: "credentials",
+    },
     email: {
       type: String,
       required: true,
@@ -26,7 +37,8 @@ const UsersSchema = new mongoose.Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     emailVerified: {
       type: Boolean,
@@ -38,5 +50,61 @@ const UsersSchema = new mongoose.Schema<IUser>(
 
 let User: mongoose.Model<IUser> =
   mongoose.models.Users || mongoose.model<IUser>("Users", UsersSchema);
+
+export async function createUser(
+  data: CreateUserParams
+): Promise<PublicUser | undefined> {
+  await connectMongoose();
+  try {
+    const user = await User.create({
+      authType: data.authType,
+      email: data.email,
+      password: data.authType === "credentials" ? data.password : "",
+    }).then((_user) => _user?.toObject());
+    if (user) {
+      return {
+        authType: user.authType,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        id: user.id,
+      };
+    }
+  } catch (error) {
+    console.log("User Create Error ", error);
+  }
+  return undefined;
+}
+export async function getUserById(id: string): Promise<PublicUser | undefined> {
+  await connectMongoose();
+  const user = await User.findOne({
+    id: id,
+  }).then((_user) => _user?.toObject());
+  if (user) {
+    return {
+      authType: user.authType,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      id: user.id,
+    };
+  }
+  return undefined;
+}
+export async function getUserByEmail(
+  email: string
+): Promise<PublicUser | undefined> {
+  await connectMongoose();
+  const user = await User.findOne({
+    email: email,
+  }).then((_user) => _user?.toObject());
+  if (user) {
+    return {
+      authType: user.authType,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      id: user.id,
+    };
+  }
+  return undefined;
+}
 
 export default User;

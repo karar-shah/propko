@@ -1,8 +1,21 @@
 import mongoose, { Types } from "mongoose";
-import UsersSchema from "./schemas/users";
+import UsersSchema, {
+  createUser,
+  getUserByEmail,
+  getUserById,
+} from "./schemas/users";
 declare global {
   var mongoose: any;
 }
+
+const db = {
+  User: {
+    ...UsersSchema,
+    getUserByEmail,
+    getUserById,
+    createUser,
+  },
+};
 
 const MONGODB_URI = process.env.DATABASE_URL as string;
 
@@ -40,17 +53,12 @@ async function connectMongoose() {
   return cached.conn;
 }
 
-const db = {
-  User: UsersSchema,
-};
-
 type WithMongoose = <TFunc extends Function>(callback: TFunc) => TFunc;
 
 const withMongoose: WithMongoose = (callback) => {
   connectMongoose();
   return callback;
 };
-
 
 const validateMongooseObject = <
   TObj extends Record<string, any> & { _id: Types.ObjectId }

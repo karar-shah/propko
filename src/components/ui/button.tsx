@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { signOut } from "next-auth/react";
+import { signOut, signIn } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
 
@@ -63,6 +63,7 @@ const GoogleSigninButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         type={type}
         ref={ref}
+        onClick={() => signIn("google", { redirect: true, callbackUrl: "/" })}
         className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-secondary-200 bg-white text-secondary-800 shadow-sm hover:bg-secondary-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-white dark:hover:bg-primary/5 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-secondary-600"
         {...props}
       >
