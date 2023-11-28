@@ -7,11 +7,11 @@ import { createRouteHandler } from "@/lib/router";
 
 
 
-export const GET = createRouteHandler({
-    handler: () => {
+// export const GET = createRouteHandler({
+//     handler: () => {
         
-    }
-})
+//     }
+// })
 
 
 
