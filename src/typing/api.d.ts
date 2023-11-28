@@ -44,3 +44,8 @@ export type ApiPagination = {
 export type PaginatedApiResponse<TData = any> = ApiResponse<TData> & {
   pagination?: ApiPagination;
 };
+
+export type IChangePassword = {} & (
+  | { type: "token"; token: string; password: string }
+  | { type: "password"; currentPassword: string; newPassword: string }
+);

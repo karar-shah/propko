@@ -17,13 +17,18 @@ export const resetPasswordSchema = z.object({
 
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 
-
-
 export const createPasswordSchema = z.object({
   password: z.string({ required_error: "Field Required." }),
 });
 
 export type CreatePasswordSchema = z.infer<typeof createPasswordSchema>;
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string({ required_error: "Field Required." }),
+  newPassword: z.string({ required_error: "Field Required." }),
+});
+
+export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
 
 // export const signupSchema = z
 //   .object({

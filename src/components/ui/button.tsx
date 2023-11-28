@@ -5,17 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { signOut, signIn } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
-import { Spinner } from "./spinner";
+import Spinner from "./spinner";
+import { DropdownMenuItem } from "./dropdown-menu";
+import { ChevronLeftIcon, ExitIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-secondary-950 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-secondary-950 disabled:pointer-events-none disabled:opacity-70",
   {
     variants: {
       variant: {
+        primary:
+          "w-full border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-70 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600",
         default:
-          "w-full border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600",
+          "w-full border border-transparent bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-950 disabled:opacity-70 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600",
         destructive:
-          "bg-red-500 text-secondary-50 shadow-sm hover:bg-red-500/90 dark:bg-red-900 dark:text-secondary-50 dark:hover:bg-red-900/90",
+          "bg-red-500 text-secondary-50 shadow-sm hover:bg-red-500/90 dark:bg-red-700 dark:text-secondary-50 dark:hover:bg-red-700/90",
         outline:
           "border border-secondary-200 bg-transparent shadow-sm hover:bg-secondary-100 hover:text-secondary-900 dark:border-secondary-800 dark:hover:bg-secondary-800 dark:hover:text-secondary-50",
         secondary:
@@ -32,7 +37,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
     },
   }
@@ -112,12 +117,39 @@ const GoogleSigninButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 GoogleSigninButton.displayName = "GoogleSigninButton";
 
+// function LogoutButton() {
+//   return (
+//     <Button type="button" onClick={() => signOut({ redirect: true })}>
+//       Logout
+//     </Button>
+//   );
+// }
+
 function LogoutButton() {
   return (
-    <Button type="button" onClick={() => signOut({ redirect: true })}>
-      Logout
+    <DropdownMenuItem
+      className="flex items-center justify-between"
+      onClick={() => signOut({ redirect: true })}
+    >
+      <span>Log Out</span>
+      <ExitIcon className="w-4 h-4" />
+    </DropdownMenuItem>
+  );
+}
+
+function BackButton({ className }: { className?: string }) {
+  const router = useRouter();
+  return (
+    <Button
+      type="button"
+      onClick={() => router.back()}
+      variant={"ghost"}
+      size={"icon"}
+      className="w-10 h-10"
+    >
+      <ChevronLeftIcon className="w-full h-full" />
     </Button>
   );
 }
 
-export { Button, buttonVariants, GoogleSigninButton, LogoutButton };
+export { Button, buttonVariants, GoogleSigninButton, LogoutButton, BackButton };

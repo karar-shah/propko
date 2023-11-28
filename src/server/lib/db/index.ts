@@ -2,6 +2,7 @@ import mongoose, { Types } from "mongoose";
 import UsersSchema, {
   createUser,
   getUserByEmail,
+  getUserByEmailWPwd,
   getUserById,
 } from "./schemas/users";
 declare global {
@@ -14,6 +15,7 @@ const db = {
     getUserByEmail,
     getUserById,
     createUser,
+    getUserByEmailWPwd
   },
 };
 

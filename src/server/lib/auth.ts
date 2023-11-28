@@ -29,15 +29,13 @@ export const authOptions: AuthOptions = {
           label: "Password",
         },
       },
-      authorize: withMongoose(async (credentials) => {
+      authorize: async (credentials) => {
+        await connectMongoose();
         const { email, password } = credentials as {
           email: string;
           password: string;
         };
-        const user = await db.User.findOne({
-          email: email,
-        }).then((_user) => _user?.toObject());
-        console.log("Auth User ", user);
+        const user = await db.User.getUserByEmailWPwd(email);
         if (!user) throw new Error(JSON.stringify({ code: "NOT_FOUND" }));
         if (user?.authType === "credentials") {
           if (!(await comparePassword(password, user.password))) {
@@ -55,7 +53,7 @@ export const authOptions: AuthOptions = {
           emailVerified: user.emailVerified,
           authType: user.authType,
         } as PublicUser;
-      }),
+      },
     }),
   ],
   session: {

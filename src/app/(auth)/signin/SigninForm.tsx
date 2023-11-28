@@ -13,7 +13,7 @@ import { AuthSchema, authSchema } from "@/validation/auth";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Spinner } from "@/components/ui/spinner";
+import Spinner from "@/components/ui/spinner";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ApiResCode } from "@/typing/api";

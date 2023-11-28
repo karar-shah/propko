@@ -9,6 +9,7 @@ export type IUser = {
   id: string;
   email: string;
   emailVerified: Boolean;
+  companyLogo?: string | null;
 } & (
   | { authType: "google"; password?: string }
   | { authType: "credentials"; password: string }
@@ -36,6 +37,11 @@ const UsersSchema = new mongoose.Schema<IUser>(
       },
     },
     password: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    companyLogo: {
       type: String,
       required: false,
       default: "",
@@ -103,6 +109,18 @@ export async function getUserByEmail(
       emailVerified: user.emailVerified,
       id: user.id,
     };
+  }
+  return undefined;
+}
+export async function getUserByEmailWPwd(
+  email: string
+): Promise<IUser | undefined> {
+  await connectMongoose();
+  const user = await User.findOne({
+    email: email,
+  }).then((_user) => _user?.toObject());
+  if (user) {
+    return user;
   }
   return undefined;
 }

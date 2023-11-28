@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { AuthSchema, authSchema } from "@/validation/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Spinner } from "@/components/ui/spinner";
+import Spinner from "@/components/ui/spinner";
 import serverActions from "@/server/actions";
 import { excludeField } from "@/lib/utils";
 import { signIn } from "next-auth/react";

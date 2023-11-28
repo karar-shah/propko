@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import Spinner from "@/components/ui/spinner";
 import serverActions from "@/server/actions";
 import { IUser } from "@/server/lib/db/schemas/users";
 import { ApiResCode, ApiResponse } from "@/typing/api";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@/components/ui/spinner";
+import Spinner from "@/components/ui/spinner";
 import serverActions from "@/server/actions";
 import { PublicUser } from "@/typing/auth";
 import { useState } from "react";
