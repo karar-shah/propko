@@ -1,6 +1,6 @@
 import MailJet from "node-mailjet";
 import jwt from "./jwt";
-import { SessionUser } from "@/typing/auth";
+import { PublicUser } from "@/typing/auth";
 
 const SENDER_EMAIL = process.env.SENDER_EMAIL as string;
 const SENDER_NAME = process.env.SENDER_NAME as string;
@@ -61,7 +61,7 @@ const sendEmail = async (
   }
 };
 
-const sendeResetPasswordEmail = async (user: SessionUser) => {
+const sendeResetPasswordEmail = async (user: PublicUser) => {
   const token = await jwt.generateToken({ userId: user.id });
   if (!token) return false;
   return await sendEmail(
@@ -71,7 +71,7 @@ const sendeResetPasswordEmail = async (user: SessionUser) => {
   );
 };
 
-const sendeVerificationEmail = async (user: SessionUser) => {
+const sendeVerificationEmail = async (user: PublicUser) => {
   const token = await jwt.generateToken({ userId: user.id });
   if (!token) return false;
   return await sendEmail(
