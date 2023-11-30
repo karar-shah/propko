@@ -51,7 +51,11 @@ const UsersSchema = new mongoose.Schema<IUser>(
       default: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    autoCreate: true,
+    // _id: false,
+  }
 );
 
 let User: mongoose.Model<IUser> =

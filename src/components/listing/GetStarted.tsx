@@ -1,6 +1,8 @@
 import Image from "next/image";
-import NextButton from "./NextButton";
+import NextButton from "./buttons";
 import { useListingStore } from "./listing-store";
+import StepsLayout from "./StepsLayout";
+import { stepsHeadings } from "./constants";
 
 type Instruction = {
   heading: string;
@@ -10,7 +12,7 @@ type Instruction = {
 
 const instructions: Instruction[] = [
   {
-    heading: "Tell us about your property  ",
+    heading: "Tell us about your property",
     description: "Share some basic info, such as where it is, area etc.",
     image: "/images/house.webp",
   },
@@ -27,16 +29,21 @@ const instructions: Instruction[] = [
 ];
 
 export default function GetStarted() {
-  const { handleNextStep } = useListingStore();
+  const handleNext = () => true;
   return (
-    <>
+    <StepsLayout
+      heading={stepsHeadings.getStarted}
+      handleNext={handleNext}
+      nextBtn={{
+        text: "Get Started",
+      }}
+    >
       <div className="mt-10 w-full flex flex-col items-center max-w-[742px] mx-auto flex-1">
         {instructions.map((instruction, index) => (
           <Instruction key={index} {...instruction} num={index + 1} />
         ))}
       </div>
-      <NextButton onClick={handleNextStep}>Get Started</NextButton>
-    </>
+    </StepsLayout>
   );
 }
 
@@ -63,7 +70,7 @@ function Instruction({
       <div className="h-full relative">
         <Image
           src={image}
-          width={185}
+          width={150}
           height={103}
           className="w-auto h-full object-contain object-right"
           alt=""

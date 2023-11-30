@@ -1,22 +1,23 @@
 import mongoose, { Types } from "mongoose";
-import UsersSchema, {
+import {
   createUser,
   getUserByEmail,
   getUserByEmailWPwd,
   getUserById,
 } from "./schemas/users";
+import Property from "./schemas/properties";
 declare global {
   var mongoose: any;
 }
 
 const db = {
   User: {
-    ...UsersSchema,
     getUserByEmail,
     getUserById,
     createUser,
-    getUserByEmailWPwd
+    getUserByEmailWPwd,
   },
+  Property: Property,
 };
 
 const MONGODB_URI = process.env.DATABASE_URL as string;

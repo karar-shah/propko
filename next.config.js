@@ -4,6 +4,13 @@ const nextConfig = {
         esmExternals: "loose",
         serverComponentsExternalPackages: ["mongoose"]
     },
+    images: {
+        remotePatterns: [
+            {
+                hostname: "res.cloudinary.com",
+            }
+        ]
+    }
 }
 
 module.exports = nextConfig

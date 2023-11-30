@@ -2,8 +2,10 @@
 import { cn } from "@/lib/utils";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
-import NextButton from "./NextButton";
+import NextButton from "./buttons";
 import { useListingStore } from "./listing-store";
+import StepsLayout from "./StepsLayout";
+import { stepsHeadings } from "./constants";
 
 type PropertyType = {
   label: string;
@@ -61,12 +63,18 @@ export default function PropertyTypeInput() {
   const { handleNextStep, setPropertyType, listingData } = useListingStore();
 
   const handleNext = () => {
-    if (!listingData?.propertyType) return;
-    handleNextStep();
+    if (!listingData?.propertyType) return false;
+    return true;
   };
 
   return (
-    <>
+    <StepsLayout
+      heading={stepsHeadings.propertyType}
+      handleNext={handleNext}
+      nextBtn={{
+        disabled: !listingData?.propertyType,
+      }}
+    >
       <div
         className={cn(
           "flex-1 w-full max-w-[800px] mx-auto gap-5",
@@ -82,10 +90,7 @@ export default function PropertyTypeInput() {
           />
         ))}
       </div>
-      <NextButton disabled={!listingData?.propertyType} onClick={handleNext}>
-        Next {">"}
-      </NextButton>
-    </>
+    </StepsLayout>
   );
 }
 
