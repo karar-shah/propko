@@ -1,6 +1,4 @@
 import Image from "next/image";
-import NextButton from "./buttons";
-import { useListingStore } from "./listing-store";
 import StepsLayout from "./StepsLayout";
 import { stepsHeadings } from "./constants";
 
