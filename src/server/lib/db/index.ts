@@ -1,5 +1,5 @@
 import mongoose, { Types } from "mongoose";
-import {
+import User, {
   createUser,
   getUserByEmail,
   getUserByEmailWPwd,
@@ -12,6 +12,7 @@ declare global {
 
 const db = {
   User: {
+    ...User,
     getUserByEmail,
     getUserById,
     createUser,
