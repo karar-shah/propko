@@ -1,8 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { HomeIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
-import NextButton from "./buttons";
 import { useListingStore } from "./listing-store";
 import StepsLayout from "./StepsLayout";
 import { stepsHeadings } from "./constants";
