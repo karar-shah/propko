@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { usePlacesWidget } from "react-google-autocomplete";
 import { useListingStore } from "./listing-store";
-import { useRouter } from "next/navigation";
 import StepsLayout from "./StepsLayout";
 import { stepsHeadings } from "./constants";
 import { Label } from "@/components/ui/label";
