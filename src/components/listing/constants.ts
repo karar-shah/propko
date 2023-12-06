@@ -3,5 +3,6 @@ export const stepsHeadings = {
   mediaFiles: "Media Files",
   propertyType: "Property Type",
   propertyDetails: "Property Details",
+  propertyHighlights: "Property Highlights",
   location: "Location",
 };

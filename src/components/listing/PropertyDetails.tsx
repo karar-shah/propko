@@ -9,6 +9,7 @@ import { SelectEl } from "../ui/select";
 
 export default function PropertyDetails() {
   const { listingData, setPropertyDetails } = useListingStore();
+  console.log("listingData", listingData);
 
   const handleNext = () => {
     if (!listingData?.propertyDetails) return false;
