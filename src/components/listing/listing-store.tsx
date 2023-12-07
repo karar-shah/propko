@@ -8,9 +8,7 @@ type ListingState = {
   setLocation: (value: IAddressDetails) => void;
   setPropertyType: (value: string) => void;
   setPropertyDetails: (value: Partial<IPropertyDetails>) => void;
-  setPropertyHighlights: (value: Partial<IPropertyHighlights>) => void;
-  // setPropertyHighlights: (value: IPropertyHighlightItem |string) => void;
-  // setPropertyHighlights: (value: any) => void;
+  setPropertyHighlights: (value: IPropertyHighlight[]) => void;
   setMediaFiles: (value: ILocalFile[]) => void;
   handleNextStep: () => Promise<void> | void;
   handlePrevStep: () => void;
@@ -52,7 +50,6 @@ const createListingStore = (intialData?: IListingData) => {
     currentStep: startStep,
     listingData: {
       ...intialData,
-      // propertyHighlights: intialData?.propertyHighlights || [],
       // propertyDetails: intialData?.propertyDetails || DEFAULT_PROPERTY_DETAILS,
     },
     async handleNextStep() {
@@ -65,6 +62,7 @@ const createListingStore = (intialData?: IListingData) => {
             dbRef: res.data.id,
             location: res.data.location,
             propertyDetails: res.data.propertyDetails,
+            propertyHighlights: res.data.propertyHighlights,
             mediaFiles: res.data.mediaFiles?.map((file) => ({
               id: file.publicId,
               uploaded: true,
@@ -111,7 +109,6 @@ const createListingStore = (intialData?: IListingData) => {
       }));
     },
     setPropertyDetails(value) {
-      console.log("value", value);
       setState((state) => ({
         ...state,
         listingData: {
@@ -133,112 +130,14 @@ const createListingStore = (intialData?: IListingData) => {
       }));
     },
     setPropertyHighlights(value) {
-      console.log("value", value);
       setState((state) => ({
         ...state,
         listingData: {
           ...state.listingData,
-          propertyHighlights: {
-            ...state.listingData.propertyHighlights,
-            ...(value.wifi && {
-              wifi: !state.listingData.propertyHighlights?.wifi,
-            }),
-            ...(value.tv && { tv: !state.listingData.propertyHighlights?.tv }),
-            ...(value.kitchen && {
-              kitchen: !state.listingData.propertyHighlights?.kitchen,
-            }),
-            ...(value.washer && {
-              washer: !state.listingData.propertyHighlights?.washer,
-            }),
-            ...(value.freeParkingOnPremises && {
-              freeParkingOnPremises:
-                !state.listingData.propertyHighlights?.freeParkingOnPremises,
-            }),
-            ...(value.paidParkingOnPremises && {
-              paidParkingOnPremises:
-                !state.listingData.propertyHighlights?.paidParkingOnPremises,
-            }),
-            ...(value.airConditioning && {
-              airConditioning:
-                !state.listingData.propertyHighlights?.airConditioning,
-            }),
-            ...(value.dedicatedWorkspace && {
-              dedicatedWorkspace:
-                !state.listingData.propertyHighlights?.dedicatedWorkspace,
-            }),
-            ...(value.pool && {
-              pool: !state.listingData.propertyHighlights?.pool,
-            }),
-            ...(value.hotTub && {
-              hotTub: !state.listingData.propertyHighlights?.hotTub,
-            }),
-            ...(value.patio && {
-              patio: !state.listingData.propertyHighlights?.patio,
-            }),
-            ...(value.bbqGrill && {
-              bbqGrill: !state.listingData.propertyHighlights?.bbqGrill,
-            }),
-            ...(value.outdoorDiningArea && {
-              outdoorDiningArea:
-                !state.listingData.propertyHighlights?.outdoorDiningArea,
-            }),
-            ...(value.firePit && {
-              firePit: !state.listingData.propertyHighlights?.firePit,
-            }),
-            ...(value.poolTable && {
-              poolTable: !state.listingData.propertyHighlights?.poolTable,
-            }),
-            ...(value.indoorFireplace && {
-              indoorFireplace:
-                !state.listingData.propertyHighlights?.indoorFireplace,
-            }),
-            ...(value.piano && {
-              piano: !state.listingData.propertyHighlights?.piano,
-            }),
-            ...(value.exerciseEquipment && {
-              exerciseEquipment:
-                !state.listingData.propertyHighlights?.exerciseEquipment,
-            }),
-            ...(value.lakeAccess && {
-              lakeAccess: !state.listingData.propertyHighlights?.lakeAccess,
-            }),
-            ...(value.beachAccess && {
-              beachAccess: !state.listingData.propertyHighlights?.beachAccess,
-            }),
-            ...(value.skiInSkiOut && {
-              skiInSkiOut: !state.listingData.propertyHighlights?.skiInSkiOut,
-            }),
-            ...(value.outdoorShower && {
-              outdoorShower:
-                !state.listingData.propertyHighlights?.outdoorShower,
-            }),
-            ...(value.smokeAlarm && {
-              smokeAlarm: !state.listingData.propertyHighlights?.smokeAlarm,
-            }),
-            ...(value.firstAidKit && {
-              firstAidKit: !state.listingData.propertyHighlights?.firstAidKit,
-            }),
-            ...(value.fireExtinguisher && {
-              fireExtinguisher:
-                !state.listingData.propertyHighlights?.fireExtinguisher,
-            }),
-            ...(value.carbonMonoxideAlarm && {
-              carbonMonoxideAlarm:
-                !state.listingData.propertyHighlights?.carbonMonoxideAlarm,
-            }),
-          },
+          propertyHighlights: value,
         },
       }));
     },
-    // setPropertyHighlights(value) {
-    //   setState((state) => ({
-    //     ...state,
-    //     listingData: {
-    //       ...state.listingData,
-    //       propertyHighlights: [...state.listingData.propertyHighlights!, value],
-    //     },
-    //   }));
-    // },
     setMediaFiles(value) {
       setState((state) => ({
         ...state,

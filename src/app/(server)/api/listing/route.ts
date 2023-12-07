@@ -32,6 +32,9 @@ export const POST = async (req: NextRequest) => {
           ...(body.propertyDetails && {
             propertyDetails: body.propertyDetails,
           }),
+          ...(body.propertyHighlights && {
+            $set: { propertyHighlights: body.propertyHighlights },
+          }),
         }
       );
     } else {
@@ -44,6 +47,7 @@ export const POST = async (req: NextRequest) => {
         })),
         status: body.status,
         propertyDetails: body.propertyDetails,
+        propertyHighlights: body.propertyHighlights,
       });
     }
     property = await Property.findOne({ id: property?.id });
@@ -57,6 +61,7 @@ export const POST = async (req: NextRequest) => {
         location: property.location,
         mediaFiles: property.mediaFiles,
         propertyDetails: property.propertyDetails,
+        propertyHighlights: property.propertyHighlights,
       },
       code: "SUCCESS",
     } satisfies ApiResponse<IProperty>);

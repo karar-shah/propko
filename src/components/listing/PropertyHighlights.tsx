@@ -6,71 +6,75 @@ import StepsLayout from "./StepsLayout";
 import { stepsHeadings } from "./constants";
 
 type highlightType = {
-  id: string;
+  name: string;
   label: string;
   image: string;
 };
 
 const propertyHighlights: highlightType[] = [
-  { id: "wifi", label: "Wifi", image: "/images/house.webp" },
-  { id: "tv", label: "TV", image: "/images/house.webp" },
-  { id: "kitchen", label: "Kitchen", image: "/images/house.webp" },
-  { id: "washer", label: "Washer", image: "/images/house.webp" },
+  { name: "wifi", label: "Wifi", image: "/images/house.webp" },
+  { name: "tv", label: "TV", image: "/images/house.webp" },
+  { name: "kitchen", label: "Kitchen", image: "/images/house.webp" },
+  { name: "washer", label: "Washer", image: "/images/house.webp" },
   {
-    id: "freeParkingOnPremises",
+    name: "freeParkingOnPremises",
     label: "Free parking on premises",
     image: "/images/house.webp",
   },
   {
-    id: "paidParkingOnPremises",
+    name: "paidParkingOnPremises",
     label: "Paid parking on premises",
     image: "/images/house.webp",
   },
   {
-    id: "airConditioning",
+    name: "airConditioning",
     label: "Air conditioning",
     image: "/images/house.webp",
   },
   {
-    id: "dedicatedWorkspace",
+    name: "dedicatedWorkspace",
     label: "Dedicated workspace",
     image: "/images/house.webp",
   },
-  { id: "pool", label: "Pool", image: "/images/house.webp" },
-  { id: "hotTub", label: "Hot tub", image: "/images/house.webp" },
-  { id: "patio", label: "Patio", image: "/images/house.webp" },
-  { id: "bbqGrill", label: "BBQ grill", image: "/images/house.webp" },
+  { name: "pool", label: "Pool", image: "/images/house.webp" },
+  { name: "hotTub", label: "Hot tub", image: "/images/house.webp" },
+  { name: "patio", label: "Patio", image: "/images/house.webp" },
+  { name: "bbqGrill", label: "BBQ grill", image: "/images/house.webp" },
   {
-    id: "outdoorDiningArea",
+    name: "outdoorDiningArea",
     label: "Outdoor dining area",
     image: "/images/house.webp",
   },
-  { id: "firePit", label: "Fire pit", image: "/images/house.webp" },
-  { id: "poolTable", label: "Pool table", image: "/images/house.webp" },
+  { name: "firePit", label: "Fire pit", image: "/images/house.webp" },
+  { name: "poolTable", label: "Pool table", image: "/images/house.webp" },
   {
-    id: "indoorFireplace",
+    name: "indoorFireplace",
     label: "Indoor fireplace",
     image: "/images/house.webp",
   },
-  { id: "piano", label: "Piano", image: "/images/house.webp" },
+  { name: "piano", label: "Piano", image: "/images/house.webp" },
   {
-    id: "exerciseEquipment",
+    name: "exerciseEquipment",
     label: "Exercise equipment",
     image: "/images/house.webp",
   },
-  { id: "lakeAccess", label: "Lake access", image: "/images/house.webp" },
-  { id: "beachAccess", label: "Beach access", image: "/images/house.webp" },
-  { id: "skiInSkiOut", label: "Ski-in/Ski-out", image: "/images/house.webp" },
-  { id: "outdoorShower", label: "Outdoor shower", image: "/images/house.webp" },
-  { id: "smokeAlarm", label: "Smoke alarm", image: "/images/house.webp" },
-  { id: "firstAidKit", label: "First aid kit", image: "/images/house.webp" },
+  { name: "lakeAccess", label: "Lake access", image: "/images/house.webp" },
+  { name: "beachAccess", label: "Beach access", image: "/images/house.webp" },
+  { name: "skiInSkiOut", label: "Ski-in/Ski-out", image: "/images/house.webp" },
   {
-    id: "fireExtinguisher",
+    name: "outdoorShower",
+    label: "Outdoor shower",
+    image: "/images/house.webp",
+  },
+  { name: "smokeAlarm", label: "Smoke alarm", image: "/images/house.webp" },
+  { name: "firstAidKit", label: "First aid kit", image: "/images/house.webp" },
+  {
+    name: "fireExtinguisher",
     label: "Fire extinguisher",
     image: "/images/house.webp",
   },
   {
-    id: "carbonMonoxideAlarm",
+    name: "carbonMonoxideAlarm",
     label: "Carbon monoxide alarm",
     image: "/images/house.webp",
   },
@@ -78,11 +82,45 @@ const propertyHighlights: highlightType[] = [
 
 export default function PropertyHighlights() {
   const { setPropertyHighlights, listingData } = useListingStore();
-  console.log("listingData from highlights", listingData);
 
   const handleNext = () => {
     if (!listingData?.propertyHighlights) return false;
     return true;
+  };
+
+  const handleSelectHighlight = (highLight: highlightType) => {
+    // Check if propertyHighlights is not available in listingData
+    if (!listingData?.propertyHighlights) {
+      setPropertyHighlights([
+        {
+          name: highLight.name,
+        },
+      ]);
+    } else {
+      // Check if the current highlight is already present
+      const isHighlightPresent = listingData.propertyHighlights.some(
+        (listingHighlight) => listingHighlight.name === highLight.name
+      );
+
+      if (isHighlightPresent) {
+        // If the current highlight is present, update its selected value
+        setPropertyHighlights(
+          listingData.propertyHighlights.filter(
+            (ListingHighLight) => ListingHighLight.name !== highLight.name
+          )
+        );
+      } else {
+        // If the current highlight is not present, check if the maximum limit is reached
+        if (listingData.propertyHighlights.length < 5) {
+          setPropertyHighlights([
+            ...listingData.propertyHighlights,
+            {
+              name: highLight.name,
+            },
+          ]);
+        }
+      }
+    }
   };
 
   return (
@@ -99,62 +137,16 @@ export default function PropertyHighlights() {
           "grid grid-cols-3 py-10"
         )}
       >
-        {propertyHighlights.map((propertyHighlight, index) => {
-          const { id } = propertyHighlight;
-          return (
-            <button
-              key={id}
-              className={
-                listingData.propertyHighlights?.[id] // Use the dynamic id here
-                  ? "text-red-500"
-                  : "text-yellow-300"
-              }
-              onClick={() =>
-                setPropertyHighlights({
-                  [id]: true, // Use the dynamic id here
-                })
-              }
-            >
-              {id}
-            </button>
-          );
-        })}
-        <button
-          className={
-            listingData.propertyHighlights?.tv
-              ? "text-red-500"
-              : "text-yellow-300"
-          }
-          onClick={() =>
-            setPropertyHighlights({
-              tv: true,
-            })
-          }
-        >
-          tv
-        </button>
-        <button
-          className={
-            listingData.propertyHighlights?.wifi
-              ? "text-red-500"
-              : "text-yellow-300"
-          }
-          onClick={() =>
-            setPropertyHighlights({
-              wifi: true,
-            })
-          }
-        >
-          wifi
-        </button>
-        {/* {propertyHighlights.map((propertyHighlight, index) => (
+        {propertyHighlights.map((highLight, index) => (
           <PropertyHighlight
             key={index}
-            {...propertyHighlight}
-            active={listingData?.propertyType === propertyHighlight.label}
-            onSelect={() => setPropertyHighlights(listingData.propertyHighlights?.tv)}
+            {...highLight}
+            active={listingData?.propertyHighlights?.some(
+              (item) => item.name === highLight.name
+            )}
+            onSelect={() => handleSelectHighlight(highLight)}
           />
-        ))} */}
+        ))}
       </div>
     </StepsLayout>
   );
