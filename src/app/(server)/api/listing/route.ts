@@ -3,8 +3,48 @@ import Property, {
   IProperty,
   IPropertyStatus,
 } from "@/server/lib/db/schemas/properties";
-import { ApiResponse } from "@/typing/api";
+import { ApiResponse, PaginatedApiResponse } from "@/typing/api";
 import { NextRequest, NextResponse } from "next/server";
+
+export const GET = async (req: NextRequest) => {
+  try {
+    await connectMongoose();
+    const properties = await db.Property.find();
+
+    // Map properties to the desired format
+    const mappedProperties = properties.map((property: any) => ({
+      id: property.id,
+      status: property.status,
+      propertyType: property.propertyType,
+      location: property.location,
+      mediaFiles: property.mediaFiles,
+      propertyDetails: property.propertyDetails,
+      propertyHighlights: property.propertyHighlights,
+      updatedAt: property.updatedAt,
+    }));
+
+    return NextResponse.json({
+      succeed: true,
+      data: mappedProperties,
+      code: "SUCCESS",
+      pagination: {
+        page: 1,
+        perPage: 1,
+        results: 1,
+        count: 1,
+        totalPages: 1,
+      },
+    } satisfies PaginatedApiResponse<IProperty[]>);
+
+    // satisfies ApiResponse<IProperty>);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({
+      succeed: false,
+      code: "UNKOWN_ERROR",
+    } satisfies ApiResponse<IProperty>);
+  }
+};
 
 export const POST = async (req: NextRequest) => {
   await connectMongoose();

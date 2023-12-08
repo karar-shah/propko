@@ -54,18 +54,19 @@ import { PaginationProps } from "@/typing/pagination";
 
 interface DataTableProps<TData, TValue> extends ToolbarProps<TData> {
   columns: ColumnDef<TData, TValue>[];
-  data?: TData[] | null;
+  // data?: TData[] | null;
+  data?: any;
   rowsCount?: number;
   showPagination?: boolean;
   showToolbar?: boolean;
   onRowClick?: (row: any) => void;
-  pagination: PaginationProps;
+  // pagination: PaginationProps;
 }
 
 export function BaseTable<TData, TValue>({
   columns,
   data,
-  pagination,
+  // pagination,
   showPagination = true,
   showToolbar = true,
   onRowClick,
@@ -101,7 +102,7 @@ export function BaseTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    manualPagination: true,
+    // manualPagination: true,
   });
 
   return (
@@ -110,8 +111,8 @@ export function BaseTable<TData, TValue>({
         <DataTableToolbar
           table={table}
           {...toolbarProps}
-          filterValue={globalFilter}
-          setFilterValue={setGlobalFilter}
+          filterValue={columnFilters}
+          setFilterValue={setColumnFilters}
         />
       )}
       <div className="border-t border-slate-200 dark:border-slate-700">
@@ -173,9 +174,7 @@ export function BaseTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {showPagination && data && (
-        <DataTablePagination table={table} {...pagination} />
-      )}
+      {showPagination && data && <DataTablePagination table={table} />}
     </div>
   );
 }

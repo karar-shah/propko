@@ -8,21 +8,21 @@ type DataTableProps = {
   columns: ColumnDef<any>[];
   onRowClick?: (row: any) => void;
   tableData?: PaginatedApiResponse<any> | null;
-  pagination: PaginationProps;
+  // pagination: PaginationProps;
 };
 
 export default function DataTable({
   columns,
-  pagination,
+  // pagination,
   onRowClick,
   tableData,
 }: DataTableProps) {
   return (
     <div>
       <BaseTable
-        data={tableData?.data}
+        data={tableData}
         columns={columns}
-        pagination={pagination}
+        // pagination={pagination}
         onRowClick={onRowClick}
       />
     </div>
