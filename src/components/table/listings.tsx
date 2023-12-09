@@ -193,7 +193,7 @@ export default function ListingTable() {
   return (
     <div>
       <BaseTable
-        data={tableData?.data}
+        data={tableData && tableData?.data}
         columns={tableColumns}
         // pagination={pagination}
       />
