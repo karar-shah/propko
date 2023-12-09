@@ -59,7 +59,7 @@ const tableColumns: ColumnDef<any>[] = [
           <span
             className={cn("max-w-full font-medium font-nunito text-slate-600")}
           >
-            {row.original.propertyDetails.holdType}
+            {row.original.propertyDetails?.holdType}
           </span>
         </div>
       );
@@ -76,7 +76,7 @@ const tableColumns: ColumnDef<any>[] = [
           <span
             className={cn("max-w-full font-medium font-nunito text-slate-600")}
           >
-            {row.original.propertyDetails.saleType}
+            {row.original.propertyDetails?.saleType}
           </span>
         </div>
       );
