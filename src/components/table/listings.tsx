@@ -93,7 +93,7 @@ const tableColumns: ColumnDef<any>[] = [
           <span
             className={cn("max-w-full font-medium font-nunito text-slate-600")}
           >
-            {row.original.location.city}
+            {row.original.location?.city}
           </span>
         </div>
       );
