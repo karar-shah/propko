@@ -130,7 +130,6 @@ function TinyEditor(props: PropertyDescriptionProps) {
 
       if (description !== undefined && description !== null) {
         // Check if the description is not undefined or null
-        console.log(description);
         setPropertyDescription(description);
       } else {
         console.error("Invalid or missing description in the API response.");
@@ -144,7 +143,7 @@ function TinyEditor(props: PropertyDescriptionProps) {
     return (
       <>
         <Editor
-          apiKey={"kyp2zmkihb1eh4w8t3hcmvqqj3hywru15n2fl94638bnbqpd"}
+          apiKey={"rzwv8zyct27dwot2j326c3vq80zrp93068xevo37sa211et3"}
           onEditorChange={(newValue, editor) => {
             // setValue(newValue);
             // setText(editor.getContent({ format: "text" }));

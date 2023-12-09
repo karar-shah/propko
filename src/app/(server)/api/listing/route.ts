@@ -8,13 +8,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
   const userId = req.nextUrl.searchParams.get("userid");
-  console.log("userId", userId);
+
   try {
     await connectMongoose();
-    const properties = await db.Property.find();
+    const properties = await db.Property.find({ userId });
 
     // Map properties to the desired format
     const mappedProperties = properties.map((property: any) => ({
+      userId: property.userId,
       id: property.id,
       status: property.status,
       propertyType: property.propertyType,
@@ -53,6 +54,7 @@ export const POST = async (req: NextRequest) => {
   const body = (await req.json()) as IListingData & {
     status?: IPropertyStatus;
   };
+
   try {
     let property: IProperty | undefined | null;
     property = body.dbRef
@@ -71,6 +73,7 @@ export const POST = async (req: NextRequest) => {
             })),
           }),
           ...(body.status && { status: body.status }),
+          ...(body.userId && { userId: body.userId }),
           ...(body.propertyDetails && {
             propertyDetails: body.propertyDetails,
           }),
@@ -91,16 +94,19 @@ export const POST = async (req: NextRequest) => {
           url: file.url,
         })),
         status: body.status,
+        userId: body.userId,
         propertyDetails: body.propertyDetails,
         propertyHighlights: body.propertyHighlights,
         propertyDescription: body.propertyDescription,
       });
     }
     property = await Property.findOne({ id: property?.id });
+
     if (!property) throw new Error("Failed to save property");
     return NextResponse.json({
       succeed: true,
       data: {
+        userId: property.userId,
         id: property.id,
         status: property.status,
         propertyType: property.propertyType,

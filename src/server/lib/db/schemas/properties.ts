@@ -4,6 +4,7 @@ import { createId } from "@paralleldrive/cuid2";
 export type IPropertyStatus = "draft" | "published";
 
 export type IProperty = {
+  userId: string;
   id: string;
   status: IPropertyStatus;
   propertyType?: string;
@@ -27,6 +28,9 @@ const PropertiesSchema = new mongoose.Schema<IProperty>(
       type: String,
       enum: ["draft", "published"],
       default: "draft",
+    },
+    userId: {
+      type: String,
     },
     propertyType: {
       type: String,

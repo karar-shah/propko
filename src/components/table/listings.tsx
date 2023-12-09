@@ -163,7 +163,6 @@ const tableColumns: ColumnDef<any>[] = [
 
 export default function ListingTable() {
   const { data: session, status } = useSession();
-  console.log("session", typeof session?.user.id);
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
   const [perPage, setPerPage] = useState(0);
