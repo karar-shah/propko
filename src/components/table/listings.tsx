@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSession } from "next-auth/react";
 
 const tableColumns: ColumnDef<any>[] = [
   {
@@ -161,6 +162,8 @@ const tableColumns: ColumnDef<any>[] = [
 ];
 
 export default function ListingTable() {
+  const { data: session, status } = useSession();
+  console.log("session", typeof session?.user.id);
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
   const [perPage, setPerPage] = useState(0);
@@ -170,7 +173,9 @@ export default function ListingTable() {
   const loadData = async () => {
     setTableData(null);
     try {
-      const res = await axios.get<PaginatedApiResponse<any>>("/api/listing");
+      const res = await axios.get<PaginatedApiResponse<any>>(
+        `/api/listing?userid=${session?.user.id}`
+      );
       setTableData(res.data);
     } catch (error) {
       setTableData(null);

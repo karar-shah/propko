@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { useListingStore } from "./listing-store";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
@@ -38,8 +39,22 @@ export function PrevButton({ className }: { className?: string }) {
 }
 
 export function SaveAndExitButton({ className }: { className?: string }) {
+  const router = useRouter();
+  const { handleNextStep, setStaus, listingData } = useListingStore();
+
+  function SaveData() {
+    setStaus("draft");
+    (async () => {
+      await handleNextStep();
+    })();
+    router.push("/");
+  }
   return (
-    <Button variant="primary" className={cn("rounded-full w-auto px-8", className)}>
+    <Button
+      variant="primary"
+      className={cn("rounded-full w-auto px-8", className)}
+      onClick={() => SaveData()}
+    >
       Save & Exit
     </Button>
   );

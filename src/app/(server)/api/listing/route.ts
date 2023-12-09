@@ -7,6 +7,8 @@ import { ApiResponse, PaginatedApiResponse } from "@/typing/api";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
+  const userId = req.nextUrl.searchParams.get("userid");
+  console.log("userId", userId);
   try {
     await connectMongoose();
     const properties = await db.Property.find();

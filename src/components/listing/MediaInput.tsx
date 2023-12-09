@@ -46,7 +46,7 @@ export default function MediaInput() {
     <StepsLayout
       heading={stepsHeadings.mediaFiles}
       handleNext={handleNext}
-      nextBtn={{ disabled: !handleNext() }}
+      nextBtn={{ disabled: !handleNext(), text: "Publish" }}
     >
       <div className={cn("flex-1 w-full max-w-[800px] mx-auto gap-5", "py-10")}>
         <FilesInputEl onChange={setMediaFiles} />

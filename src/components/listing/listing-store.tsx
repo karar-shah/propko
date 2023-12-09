@@ -12,6 +12,7 @@ type ListingState = {
   setMediaFiles: (value: ILocalFile[]) => void;
   handleNextStep: () => Promise<void> | void;
   handlePrevStep: () => void;
+  setStaus: (value: IPropertyStatus) => void;
 };
 
 function getNextStep(curStep: IListingStep): IListingStep {
@@ -147,6 +148,15 @@ const createListingStore = (intialData?: IListingData) => {
         },
       }));
     },
+    setStaus(value) {
+      setState((state) => ({
+        ...state,
+        listingData: {
+          ...state.listingData,
+          status: value,
+        },
+      }));
+    },
   }));
 };
 
@@ -170,7 +180,7 @@ import { useContext } from "react";
 import { useStore } from "zustand";
 import apiClient from "@/client/api";
 import { ApiResponse } from "@/typing/api";
-import { IProperty } from "@/server/lib/db/schemas/properties";
+import { IProperty, IPropertyStatus } from "@/server/lib/db/schemas/properties";
 
 export function useListingStore() {
   const store = useContext(ListingContext);
