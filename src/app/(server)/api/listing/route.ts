@@ -77,6 +77,9 @@ export const POST = async (req: NextRequest) => {
           ...(body.propertyHighlights && {
             $set: { propertyHighlights: body.propertyHighlights },
           }),
+          ...(body.propertyDescription && {
+            $set: { propertyDescription: body.propertyDescription },
+          }),
         }
       );
     } else {
@@ -90,6 +93,7 @@ export const POST = async (req: NextRequest) => {
         status: body.status,
         propertyDetails: body.propertyDetails,
         propertyHighlights: body.propertyHighlights,
+        propertyDescription: body.propertyDescription,
       });
     }
     property = await Property.findOne({ id: property?.id });
@@ -104,6 +108,7 @@ export const POST = async (req: NextRequest) => {
         mediaFiles: property.mediaFiles,
         propertyDetails: property.propertyDetails,
         propertyHighlights: property.propertyHighlights,
+        propertyDescription: property.propertyDescription,
       },
       code: "SUCCESS",
     } satisfies ApiResponse<IProperty>);

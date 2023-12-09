@@ -123,6 +123,8 @@ export default function PropertyHighlights() {
     }
   };
 
+  
+
   return (
     <StepsLayout
       heading={stepsHeadings.propertyHighlights}

@@ -7,6 +7,7 @@ import MediaInput from "./MediaInput";
 import PropertyDetails from "./PropertyDetails";
 import PropertyHighlights from "./PropertyHighlights";
 import Publish from "./publish";
+import PropertyDescription from "./PropertyDescription";
 
 function StepsContainerInner() {
   const { currentStep } = useListingStore();
@@ -21,6 +22,8 @@ function StepsContainerInner() {
         <LocationInput />
       ) : currentStep === "highlights" ? (
         <PropertyHighlights />
+      ) : currentStep === "description" ? (
+        <PropertyDescription />
       ) : currentStep === "media-files" ? (
         <MediaInput />
       ) : currentStep === "publish" ? (

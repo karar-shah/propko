@@ -8,6 +8,7 @@ export type IProperty = {
   status: IPropertyStatus;
   propertyType?: string;
   propertyHighlights?: Array<IPropertyHighlight>;
+  propertyDescription?: IPropertyDescription;
   mediaFiles?: Array<ICldFile>;
   propertyDetails?: IPropertyDetails;
   location?: IAddressDetails;
@@ -41,6 +42,9 @@ const PropertiesSchema = new mongoose.Schema<IProperty>(
     },
     propertyHighlights: {
       type: Array<IPropertyHighlight>,
+    },
+    propertyDescription: {
+      type: String,
     },
   },
   {

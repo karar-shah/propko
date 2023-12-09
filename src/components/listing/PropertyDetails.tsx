@@ -13,6 +13,7 @@ export default function PropertyDetails() {
   const handleNext = () => {
     if (!listingData?.propertyDetails) return false;
     if (!listingData?.propertyDetails.saleType) return false;
+    if (listingData?.propertyDetails.saleType === "Rent") return true;
     if (!listingData?.propertyDetails.holdType) return false;
     return true;
   };

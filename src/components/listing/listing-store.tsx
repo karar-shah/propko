@@ -9,6 +9,7 @@ type ListingState = {
   setPropertyType: (value: string) => void;
   setPropertyDetails: (value: Partial<IPropertyDetails>) => void;
   setPropertyHighlights: (value: IPropertyHighlight[]) => void;
+  setPropertyDescription: (value:IPropertyDescription)=>void;
   setMediaFiles: (value: ILocalFile[]) => void;
   handleNextStep: () => Promise<void> | void;
   handlePrevStep: () => void;
@@ -20,14 +21,16 @@ function getNextStep(curStep: IListingStep): IListingStep {
   if (curStep === "property-type") return "property-details";
   if (curStep === "property-details") return "location";
   if (curStep === "location") return "highlights";
-  if (curStep === "highlights") return "media-files";
+  if (curStep === "highlights") return "description";
+  if (curStep === "description") return "media-files";
   if (curStep === "media-files") return "publish";
   return "idle";
 }
 
 function getPrevStep(curStep: IListingStep): IListingStep {
   if (curStep === "publish") return "media-files";
-  if (curStep === "media-files") return "highlights";
+  if (curStep === "media-files") return "description";
+  if (curStep === "description") return "highlights";
   if (curStep === "highlights") return "location";
   if (curStep === "location") return "property-details";
   if (curStep === "property-details") return "property-type";
@@ -64,6 +67,7 @@ const createListingStore = (intialData?: IListingData) => {
             location: res.data.location,
             propertyDetails: res.data.propertyDetails,
             propertyHighlights: res.data.propertyHighlights,
+            propertyDescription: res.data.propertyDescription,
             mediaFiles: res.data.mediaFiles?.map((file) => ({
               id: file.publicId,
               uploaded: true,
@@ -136,6 +140,15 @@ const createListingStore = (intialData?: IListingData) => {
         listingData: {
           ...state.listingData,
           propertyHighlights: value,
+        },
+      }));
+    },
+    setPropertyDescription(value) {
+      setState((state) => ({
+        ...state,
+        listingData: {
+          ...state.listingData,
+          propertyDescription: value,
         },
       }));
     },

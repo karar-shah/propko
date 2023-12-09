@@ -4,5 +4,6 @@ export const stepsHeadings = {
   propertyType: "Property Type",
   propertyDetails: "Property Details",
   propertyHighlights: "Property Highlights",
+  propertyDescription: "Property Description",
   location: "Location",
 };
