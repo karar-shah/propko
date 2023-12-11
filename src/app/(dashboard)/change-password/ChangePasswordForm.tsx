@@ -1,4 +1,5 @@
 "use client";
+import apiClient from "@/client/api";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
+import { useToast } from "@/components/ui/use-toast";
 import {
   ChangePasswordSchema,
   CreatePasswordSchema,
@@ -20,11 +22,38 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 export default function ChangePasswordForm() {
+  const { toast } = useToast();
   const form = useForm<ChangePasswordSchema>({
     resolver: zodResolver(changePasswordSchema),
     mode: "onSubmit",
   });
-  const handleSubmit = async (values: ChangePasswordSchema) => {};
+  const handleSubmit = async (values: ChangePasswordSchema) => {
+    const res = await apiClient.auth.changePassword({
+      type: "password",
+      currentPassword: values.currentPassword,
+      newPassword: values.newPassword,
+    });
+    if (!res.succeed) {
+      if (res.code === "WRONG_PASSWORD") {
+        form.setError("currentPassword", {
+          message: "Wrong password.",
+          type: "validate",
+        });
+      } else {
+        toast({
+          title: "Got some error, while processing your request.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+    toast({
+      title: "Password changed successfully.",
+    });
+    setTimeout(() => {
+      return window.location.reload();
+    }, 200);
+  };
   return (
     <div className="p-4 sm:p-7">
       <>

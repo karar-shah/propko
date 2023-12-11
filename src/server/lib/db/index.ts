@@ -12,7 +12,8 @@ declare global {
 
 const db = {
   User: {
-    ...User,
+    updateOne: User.updateOne,
+    findOne: User.findOne,
     getUserByEmail,
     getUserById,
     createUser,

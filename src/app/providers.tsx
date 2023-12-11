@@ -1,5 +1,6 @@
 "use client";
 
+import { Toaster } from "@/components/ui/toaster";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
@@ -13,6 +14,7 @@ type Props = {
 export function Providers({ children, session }: Props) {
   return (
     <ThemeProvider attribute="class">
+      <Toaster />
       <SessionProvider session={session}>{children}</SessionProvider>
     </ThemeProvider>
   );
