@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Table as TTable } from "@tanstack/react-table";
+import { ColumnFiltersState, Table as TTable } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Cross2Icon } from "@radix-ui/react-icons";
@@ -13,8 +13,8 @@ export interface ToolbarProps<TData> {
 }
 interface DataTableToolbarProps<TData> extends ToolbarProps<TData> {
   table: TTable<TData>;
-  filterValue: string;
-  setFilterValue: (value: string) => void;
+  filterValue: ColumnFiltersState;
+  setFilterValue: (value: ColumnFiltersState) => void;
 }
 
 export type TableActionPopupState = {
@@ -35,9 +35,13 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between p-4">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search..."
-          value={filterValue}
-          onChange={(event) => setFilterValue(event.target.value)}
+          placeholder="Search property type"
+          value={
+            (table.getColumn("propertyType")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("propertyType")?.setFilterValue(event.target.value)
+          }
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {isFiltered && (

@@ -13,6 +13,8 @@ type IListingStep =
   | "property-type"
   | "property-details"
   | "location"
+  | "highlights"
+  | "description"
   | "media-files"
   | "publish";
 
@@ -26,10 +28,22 @@ type IPropertyDetails = {
   holdType?: IPropertyHoldType;
 };
 
+type IPropertyHighlight = {
+  name: string;
+};
+
+type IPropertyDescription = string;
+//{
+//   description: string;
+// };
+
 type IListingData = {
+  userId?: string;
   dbRef?: string;
   location?: IAddressDetails;
   propertyType?: string;
   propertyDetails?: IPropertyDetails;
+  propertyHighlights?: IPropertyHighlight[];
+  propertyDescription?: IPropertyDescription;
   mediaFiles?: ILocalFile[];
 };

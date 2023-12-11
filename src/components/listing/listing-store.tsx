@@ -8,23 +8,30 @@ type ListingState = {
   setLocation: (value: IAddressDetails) => void;
   setPropertyType: (value: string) => void;
   setPropertyDetails: (value: Partial<IPropertyDetails>) => void;
+  setPropertyHighlights: (value: IPropertyHighlight[]) => void;
+  setPropertyDescription: (value: IPropertyDescription) => void;
   setMediaFiles: (value: ILocalFile[]) => void;
   handleNextStep: () => Promise<void> | void;
   handlePrevStep: () => void;
+  setStaus: (value: IPropertyStatus) => void;
 };
 
 function getNextStep(curStep: IListingStep): IListingStep {
   if (curStep === "idle") return "property-type";
   if (curStep === "property-type") return "property-details";
   if (curStep === "property-details") return "location";
-  if (curStep === "location") return "media-files";
+  if (curStep === "location") return "highlights";
+  if (curStep === "highlights") return "description";
+  if (curStep === "description") return "media-files";
   if (curStep === "media-files") return "publish";
   return "idle";
 }
 
 function getPrevStep(curStep: IListingStep): IListingStep {
   if (curStep === "publish") return "media-files";
-  if (curStep === "media-files") return "location";
+  if (curStep === "media-files") return "description";
+  if (curStep === "description") return "highlights";
+  if (curStep === "highlights") return "location";
   if (curStep === "location") return "property-details";
   if (curStep === "property-details") return "property-type";
   return "idle";
@@ -40,12 +47,16 @@ const DEFAULT_PROPERTY_DETAILS: IPropertyDetails = {
   saleType: undefined,
 };
 
-const createListingStore = (intialData?: IListingData) => {
+const createListingStore = (
+  intialData?: IListingData,
+  userId?: string | undefined
+) => {
   const startStep: IListingStep = "idle";
-  console.log(intialData);
+
   return createStore<ListingState>()((setState, getState) => ({
     currentStep: startStep,
     listingData: {
+      userId: userId,
       ...intialData,
       // propertyDetails: intialData?.propertyDetails || DEFAULT_PROPERTY_DETAILS,
     },
@@ -54,11 +65,15 @@ const createListingStore = (intialData?: IListingData) => {
       let updatedData: IListingData | undefined;
       if (currentStep !== "idle") {
         const res = await apiClient.listings.saveData(getState().listingData);
+
         if (res.succeed && res.data) {
           updatedData = {
+            userId: res.data.userId,
             dbRef: res.data.id,
             location: res.data.location,
             propertyDetails: res.data.propertyDetails,
+            propertyHighlights: res.data.propertyHighlights,
+            propertyDescription: res.data.propertyDescription,
             mediaFiles: res.data.mediaFiles?.map((file) => ({
               id: file.publicId,
               uploaded: true,
@@ -125,12 +140,39 @@ const createListingStore = (intialData?: IListingData) => {
         },
       }));
     },
+    setPropertyHighlights(value) {
+      setState((state) => ({
+        ...state,
+        listingData: {
+          ...state.listingData,
+          propertyHighlights: value,
+        },
+      }));
+    },
+    setPropertyDescription(value) {
+      setState((state) => ({
+        ...state,
+        listingData: {
+          ...state.listingData,
+          propertyDescription: value,
+        },
+      }));
+    },
     setMediaFiles(value) {
       setState((state) => ({
         ...state,
         listingData: {
           ...state.listingData,
           mediaFiles: value,
+        },
+      }));
+    },
+    setStaus(value) {
+      setState((state) => ({
+        ...state,
+        listingData: {
+          ...state.listingData,
+          status: value,
         },
       }));
     },
@@ -142,9 +184,10 @@ type ProviderProps = React.PropsWithChildren<{
 }>;
 
 export function ListingStoreProvider({ children, listingData }: ProviderProps) {
+  const { data: session, status } = useSession();
   const storeRef = useRef<ListingStore>();
   if (!storeRef.current) {
-    storeRef.current = createListingStore(listingData);
+    storeRef.current = createListingStore(listingData, session?.user.id);
   }
   return (
     <ListingContext.Provider value={storeRef.current}>
@@ -157,7 +200,8 @@ import { useContext } from "react";
 import { useStore } from "zustand";
 import apiClient from "@/client/api";
 import { ApiResponse } from "@/typing/api";
-import { IProperty } from "@/server/lib/db/schemas/properties";
+import { IProperty, IPropertyStatus } from "@/server/lib/db/schemas/properties";
+import { useSession } from "next-auth/react";
 
 export function useListingStore() {
   const store = useContext(ListingContext);

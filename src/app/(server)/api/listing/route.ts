@@ -3,14 +3,58 @@ import Property, {
   IProperty,
   IPropertyStatus,
 } from "@/server/lib/db/schemas/properties";
-import { ApiResponse } from "@/typing/api";
+import { ApiResponse, PaginatedApiResponse } from "@/typing/api";
 import { NextRequest, NextResponse } from "next/server";
+
+export const GET = async (req: NextRequest) => {
+  const userId = req.nextUrl.searchParams.get("userid");
+
+  try {
+    await connectMongoose();
+    const properties = await db.Property.find({ userId });
+
+    // Map properties to the desired format
+    const mappedProperties = properties.map((property: any) => ({
+      userId: property.userId,
+      id: property.id,
+      status: property.status,
+      propertyType: property.propertyType,
+      location: property.location,
+      mediaFiles: property.mediaFiles,
+      propertyDetails: property.propertyDetails,
+      propertyHighlights: property.propertyHighlights,
+      updatedAt: property.updatedAt,
+    }));
+
+    return NextResponse.json({
+      succeed: true,
+      data: mappedProperties,
+      code: "SUCCESS",
+      pagination: {
+        page: 1,
+        perPage: 1,
+        results: 1,
+        count: 1,
+        totalPages: 1,
+      },
+    } satisfies PaginatedApiResponse<IProperty[]>);
+
+    // satisfies ApiResponse<IProperty>);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({
+      succeed: false,
+      code: "UNKOWN_ERROR",
+    } satisfies ApiResponse<IProperty>);
+  }
+};
 
 export const POST = async (req: NextRequest) => {
   await connectMongoose();
   const body = (await req.json()) as IListingData & {
     status?: IPropertyStatus;
   };
+
   try {
     let property: IProperty | undefined | null;
     property = body.dbRef
@@ -29,8 +73,15 @@ export const POST = async (req: NextRequest) => {
             })),
           }),
           ...(body.status && { status: body.status }),
+          ...(body.userId && { userId: body.userId }),
           ...(body.propertyDetails && {
             propertyDetails: body.propertyDetails,
+          }),
+          ...(body.propertyHighlights && {
+            $set: { propertyHighlights: body.propertyHighlights },
+          }),
+          ...(body.propertyDescription && {
+            $set: { propertyDescription: body.propertyDescription },
           }),
         }
       );
@@ -43,20 +94,27 @@ export const POST = async (req: NextRequest) => {
           url: file.url,
         })),
         status: body.status,
+        userId: body.userId,
         propertyDetails: body.propertyDetails,
+        propertyHighlights: body.propertyHighlights,
+        propertyDescription: body.propertyDescription,
       });
     }
     property = await Property.findOne({ id: property?.id });
+
     if (!property) throw new Error("Failed to save property");
     return NextResponse.json({
       succeed: true,
       data: {
+        userId: property.userId,
         id: property.id,
         status: property.status,
         propertyType: property.propertyType,
         location: property.location,
         mediaFiles: property.mediaFiles,
         propertyDetails: property.propertyDetails,
+        propertyHighlights: property.propertyHighlights,
+        propertyDescription: property.propertyDescription,
       },
       code: "SUCCESS",
     } satisfies ApiResponse<IProperty>);

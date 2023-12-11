@@ -4,9 +4,12 @@ import { createId } from "@paralleldrive/cuid2";
 export type IPropertyStatus = "draft" | "published";
 
 export type IProperty = {
+  userId: string;
   id: string;
   status: IPropertyStatus;
   propertyType?: string;
+  propertyHighlights?: Array<IPropertyHighlight>;
+  propertyDescription?: IPropertyDescription;
   mediaFiles?: Array<ICldFile>;
   propertyDetails?: IPropertyDetails;
   location?: IAddressDetails;
@@ -26,6 +29,9 @@ const PropertiesSchema = new mongoose.Schema<IProperty>(
       enum: ["draft", "published"],
       default: "draft",
     },
+    userId: {
+      type: String,
+    },
     propertyType: {
       type: String,
     },
@@ -37,6 +43,12 @@ const PropertiesSchema = new mongoose.Schema<IProperty>(
     },
     propertyDetails: {
       type: Schema.Types.Mixed,
+    },
+    propertyHighlights: {
+      type: Array<IPropertyHighlight>,
+    },
+    propertyDescription: {
+      type: String,
     },
   },
   {

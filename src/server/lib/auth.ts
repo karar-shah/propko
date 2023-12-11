@@ -69,7 +69,7 @@ export const authOptions: AuthOptions = {
     error: "/signin",
     newUser: "/signup",
   },
-  // secret: process.env.NEXTAUTH_SECRET as string,
+  secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
     async signIn({ user, account }) {
       // console.log("User", user);
